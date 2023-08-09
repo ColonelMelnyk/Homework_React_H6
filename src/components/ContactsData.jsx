@@ -1,27 +1,25 @@
-import css from './Form.module.css'
 import PropTypes from 'prop-types';
-export const DataContacts = ({ contacts, contactDel }) => {
+import { useDispatch } from 'react-redux';
+import { onDeleteContact } from 'redux/SliceContacts';
+export const DataContacts = ({ contact }) => {
+  const dispatch = useDispatch();
+  const onHandleDelete = () => dispatch(onDeleteContact(contact.id));
+
   return (
-    <ul className={css.contacts_list}>
-      {contacts.map(contact => (
         <li  key={contact.id}>
           <p>{contact.name}: {contact.number}</p>
-          <button type="button" onClick={() => contactDel(contact.id)}>
+          <button type="button" onClick={onHandleDelete}>
             Delete
           </button>
         </li>
-      ))}
-    </ul>
+
   );
 };
 
 DataContacts.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
+  contact: PropTypes.shape({
       name: PropTypes.string.isRequired,
       number: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
     })
-  ).isRequired,
-  contactDel: PropTypes.func.isRequired,
 };

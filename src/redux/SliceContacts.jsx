@@ -33,7 +33,7 @@ const contactsSliced = createSlice({
   name: 'contacts',
   initialState: initialContacts,
   reducers: {
-    addContact: {
+    onAddContact: {
       reducer(state, action) {
         return [...state, action.payload];
       },
@@ -47,11 +47,11 @@ const contactsSliced = createSlice({
         };
       },
     },
-    OnDeleteContact(state, action) {
+    onDeleteContact(state, action) {
       return state.filter(contact => contact.id !== action.payload);
     },
   },
 });
 
-export const { addContact, deleteContact } = contactsSliced.actions;
+export const { onAddContact,  onDeleteContact } = contactsSliced.actions;
 export const contactsReducer = contactsSliced.reducer;

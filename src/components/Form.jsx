@@ -1,18 +1,26 @@
 import React from 'react';
 import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { onAddContact } from 'redux/SliceContacts';
+import { Notify } from 'notiflix';
 import css from './Form.module.css'
-export const Form = ({ addContactHandler }) => {
+export const Form = () => {
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
-  
-    const onHandleSubmit = e => {
-      e.preventDefault();
-      addContactHandler(name, number);
+    const dispatch = useDispatch();
+    const contacts = useSelector(state => state.contacts);
+    const isRealContact = contacts.some(
+    contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    const onHandleSubmit = event => {
+      event.preventDefault();
+      if (isRealContact) {
+        return Notify.failure(`${name} Contact already exists!`);
+      }
+      dispatch(onAddContact(name, number));
       setName('');
       setNumber('');
     };
-  
     const onHandleChange = event => {
       const { name, value } = event.target;
   
@@ -38,7 +46,7 @@ export const Form = ({ addContactHandler }) => {
           onChange={onHandleChange}
             type="text"
             name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+            pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash, and spaces. For example: Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required   
           />
@@ -50,7 +58,7 @@ export const Form = ({ addContactHandler }) => {
            onChange={onHandleChange}
             type="tel"
             name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+            pattern="\+?\d{1,4}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
           />
@@ -59,8 +67,3 @@ export const Form = ({ addContactHandler }) => {
       </form>
     );
   }
-
-
-Form.propTypes = {
-    addContactHandler: PropTypes.func.isRequired,
-};
